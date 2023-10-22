@@ -1,0 +1,39 @@
+python autograder.py -q q1
+python autograder.py -q q2
+python autograder.py -q q3
+python autograder.py -q q4
+
+python3 pacman.py -l tinyMaze -p SearchAgent -a fn=tinyMazeSearch
+
+python3 pacman.py -l tinyMaze -p SearchAgent
+python3 pacman.py -l mediumMaze -p SearchAgent --frameTime=0.06
+python3 pacman.py -l bigMaze -z .5 -p SearchAgent --frameTime=0
+
+python3 pacman.py -l mediumMaze -p SearchAgent -a fn=bfs --frameTime=0.06
+python3 pacman.py -l bigMaze -p SearchAgent -a fn=bfs -z .5 --frameTime=0
+python3 eightpuzzle.py
+
+python3 pacman.py -l mediumMaze -p SearchAgent -a fn=ucs --frameTime=0.06
+python3 pacman.py -l mediumDottedMaze -p StayEastSearchAgent --frameTime=0.06
+python3 pacman.py -l mediumScaryMaze -p StayWestSearchAgent --frameTime=0.06
+
+python3 pacman.py -l bigMaze -z .5 -p SearchAgent -a fn=astar,heuristic=manhattanHeuristic --frameTime=0.02
+
+openMaze eh bom para observar diferenças:
+python3 pacman.py -l openMaze -z .5 -p SearchAgent -a fn=dfs --frameTime=0.02
+python3 pacman.py -l openMaze -z .5 -p SearchAgent -a fn=bfs --frameTime=0.02
+python3 pacman.py -l openMaze -z .5 -p SearchAgent -a fn=ucs --frameTime=0.02
+python3 pacman.py -l openMaze -z .5 -p SearchAgent -a fn=astar --frameTime=0.02
+
+
+python3 pacman.py -l tinyCorners -p SearchAgent -a fn=bfs,prob=CornersProblem
+python3 pacman.py -l mediumCorners -p SearchAgent -a fn=bfs,prob=CornersProblem
+
+python3 pacman.py -l mediumCorners -p AStarCornersAgent -z 0.5
+
+python3 pacman.py -l testSearch -p AStarFoodSearchAgent
+python3 pacman.py -l trickySearch -p AStarFoodSearchAgent
+esse nao vai:
+python3 pacman.py -l mediumSearch -p AStarFoodSearchAgent  
+
+python3 pacman.py -l bigSearch -p ClosestDotSearchAgent -z .5
