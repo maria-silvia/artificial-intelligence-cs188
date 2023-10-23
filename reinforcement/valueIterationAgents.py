@@ -65,12 +65,11 @@ class ValueIterationAgent(ValueEstimationAgent):
           value iteration, V_k+1(...) depends on V_k(...)'s.
         """
         "*** YOUR CODE HERE ***"
-        for i in range(self.iterations):
+        for _ in range(self.iterations):
             
-            # calcula V(s) para todo s
-            values_by_state = util.Counter()
+            # calcula novos V(s) para todo s
+            new_values = self.values.copy()
             for state in self.mdp.getStates():
-            
                 # calcula Q*(s) para toda acao
                 q_values_by_action = util.Counter()
                 for action in self.mdp.getPossibleActions(state):
@@ -78,11 +77,9 @@ class ValueIterationAgent(ValueEstimationAgent):
 
                 # escolhe maior Q*(s)
                 best_action = q_values_by_action.argMax()
-                values_by_state[state] = q_values_by_action[best_action]
+                new_values[state] = q_values_by_action[best_action]
 
-            # atualiza valores econtrados (?)
-            for s in self.mdp.getStates():
-                self.values[s] = values_by_state[s]
+            self.values = new_values
                 
 
     def getValue(self, state):
@@ -100,8 +97,8 @@ class ValueIterationAgent(ValueEstimationAgent):
         q = 0
         for next_state, prob in self.mdp.getTransitionStatesAndProbs(state, action):
             instant_reward = self.mdp.getReward(state, action, next_state)
-            discounted_reward = self.discount * self.values[next_state]
-            q += prob * (instant_reward + discounted_reward)
+            discounted_future_reward = self.discount * self.values[next_state]
+            q += prob * (instant_reward + discounted_future_reward)
         return q
 
 
@@ -115,6 +112,7 @@ class ValueIterationAgent(ValueEstimationAgent):
           terminal state, you should return None.
         """
         "*** YOUR CODE HERE ***"
+        
         "given values, returns best action"
         possible_actions = self.mdp.getPossibleActions(state)
         
@@ -124,7 +122,7 @@ class ValueIterationAgent(ValueEstimationAgent):
         
         q_values = util.Counter()
         for action in possible_actions:
-            q_values[action] = self.computeQValueFromValues(state, action)
+            q_values[action] = self.getQValue(state, action)
 
         return q_values.argMax()
 
