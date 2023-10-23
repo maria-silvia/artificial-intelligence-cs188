@@ -65,6 +65,25 @@ class ValueIterationAgent(ValueEstimationAgent):
           value iteration, V_k+1(...) depends on V_k(...)'s.
         """
         "*** YOUR CODE HERE ***"
+        for i in range(self.iterations):
+            
+            # calcula V(s) para todo s
+            values_by_state = util.Counter()
+            for state in self.mdp.getStates():
+            
+                # calcula Q*(s) para toda acao
+                q_values_by_action = util.Counter()
+                for action in self.mdp.getPossibleActions(state):
+                    q_values_by_action[action] = self.computeQValueFromValues(state, action)
+
+                # escolhe maior Q*(s)
+                best_action = q_values_by_action.argMax()
+                values_by_state[state] = q_values_by_action[best_action]
+
+            # atualiza valores econtrados (?)
+            for s in self.mdp.getStates():
+                self.values[s] = values_by_state[s]
+                
 
     def getValue(self, state):
         """
@@ -78,7 +97,13 @@ class ValueIterationAgent(ValueEstimationAgent):
           value function stored in self.values.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        q = 0
+        for next_state, prob in self.mdp.getTransitionStatesAndProbs(state, action):
+            instant_reward = self.mdp.getReward(state, action, next_state)
+            discounted_reward = self.discount * self.values[next_state]
+            q += prob * (instant_reward + discounted_reward)
+        return q
+
 
     def computeActionFromValues(self, state):
         """
@@ -90,7 +115,19 @@ class ValueIterationAgent(ValueEstimationAgent):
           terminal state, you should return None.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        "given values, returns best action"
+        possible_actions = self.mdp.getPossibleActions(state)
+        
+        is_terminal_state = len(possible_actions) == 0
+        if is_terminal_state:
+            return None
+        
+        q_values = util.Counter()
+        for action in possible_actions:
+            q_values[action] = self.computeQValueFromValues(state, action)
+
+        return q_values.argMax()
+
 
     def getPolicy(self, state):
         return self.computeActionFromValues(state)

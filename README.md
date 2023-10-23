@@ -23,4 +23,10 @@ multiagent/multiAgents.py
 ## Reinforcement Learning
 reinforcement/ 
 
-- MDP (Markov Decision Process)
+### MDP (Markov Decision Process)
+
+- Value Iteration: runValueIteration() 
+- Policy Extraction: computeActionFromValues()
+- computeQValueFromValues()
+
+
