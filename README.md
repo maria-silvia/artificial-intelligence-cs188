@@ -21,12 +21,19 @@ multiagent/multiAgents.py
 - Evaluation Function
 
 ## Reinforcement Learning
-reinforcement/ 
 
 ### MDP (Markov Decision Process)
+reinforcement/valueIterationAgents.py
 
 - Value Iteration: runValueIteration() 
 - Policy Extraction: computeActionFromValues()
 - computeQValueFromValues()
 
+### Reinforcement Learning
+reinforcement/qlearningAgents.py
 
+- Q-Learning and Temporal difference learning: update()
+    keeps updating the estimates of Q* values with using a learning rate (alpha) to weight
+
+- Epsilon Greedy: getAction()
+    at rate epsilon alternates between exploring something new (random action) or exploiting policy built so far
