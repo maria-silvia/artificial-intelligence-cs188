@@ -68,7 +68,9 @@ class QLearningAgent(ReinforcementAgent):
           terminal state, you should return a value of 0.0.
         """
         "*** YOUR CODE HERE ***"
-        # testar terminal?
+        if len(self.getLegalActions(state)) == 0:
+            return 0.0
+        
         q_values = self.computeQValues(state)
         max_action = q_values.argMax()
         return q_values[max_action]
@@ -80,9 +82,11 @@ class QLearningAgent(ReinforcementAgent):
           you should return None.
         """
         "*** YOUR CODE HERE ***"
+        if len(self.getLegalActions(state)) == 0:
+            return None
+        
         q_values = self.computeQValues(state)
         return q_values.argMax()
-
 
     def getAction(self, state):
         """
@@ -96,13 +100,13 @@ class QLearningAgent(ReinforcementAgent):
         """
         # Pick Action
         legalActions = self.getLegalActions(state)
-        action = None # tratar temrinal?
         "*** YOUR CODE HERE ***"
-        random_action = random.choice(legalActions)
+        if len(legalActions) == 0:
+            return None
+        
         best_action = self.computeActionFromQValues(state)
-
         if util.flipCoin(self.epsilon):
-            return random_action
+            return random.choice(legalActions)
         else:
             return best_action
 
@@ -115,12 +119,12 @@ class QLearningAgent(ReinforcementAgent):
           it will be called on your behalf
         """
         "*** YOUR CODE HERE ***"
-        sample = reward + self.discount * self.computeValueFromQValues(nextState)
         
-        new_average_q = (1-self.alpha) * self.getQValue(state,action) 
-        new_average_q += self.alpha * sample
+        old_q = self.getQValue(state,action) 
+        new_q = reward + self.discount * self.computeValueFromQValues(nextState)
         
-        self.running_q_values[(state,action)] = new_average_q
+        new_running_average = (1 - self.alpha) * old_q + self.alpha * new_q
+        self.running_q_values[(state,action)] = new_running_average
 
     def getPolicy(self, state):
         return self.computeActionFromQValues(state)
