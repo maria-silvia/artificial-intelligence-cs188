@@ -36,4 +36,7 @@ reinforcement/qlearningAgents.py
     keeps updating the estimates of Q* values with using a learning rate (alpha) to weight
 
 - Epsilon Greedy: getAction()
-    at rate epsilon alternates between exploring something new (random action) or exploiting policy built so far
+    at epsilon rate alternates between exploring something new (random action) or exploiting policy built so far
+
+- Approximate Q-Learning and Feature-Based Representations: ApproximateQAgent
+    Pacman is able to generalize, faster learning
