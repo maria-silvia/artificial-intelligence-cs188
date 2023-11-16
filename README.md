@@ -40,3 +40,6 @@ reinforcement/qlearningAgents.py
 
 - Approximate Q-Learning and Feature-Based Representations: ApproximateQAgent
     Pacman is able to generalize, faster learning
+
+
+## Machine Learning
