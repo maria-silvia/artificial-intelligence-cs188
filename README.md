@@ -46,3 +46,4 @@ reinforcement/qlearningAgents.py
 machinelearning/models.py
 
 - Binary Perceptron: PerceptronModel 
+- Non-linear Regression (fit a curve to a set of data points): RegressionModel
