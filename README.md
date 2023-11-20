@@ -47,4 +47,11 @@ machinelearning/models.py
 
 - Binary Perceptron: PerceptronModel 
 - Non-linear Regression (fit a curve to a set of data points): RegressionModel
+  - minimizes loss
+
 - Digit Classification
+  - maximizes accuracy
+  
+- Language Identification
+  - handle variable-length inputs
+  - Recurrent Neural Network (RNN)

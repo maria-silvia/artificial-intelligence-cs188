@@ -274,6 +274,23 @@ class LanguageIDModel(object):
 
         # Initialize your model parameters here
         "*** YOUR CODE HERE ***"
+        
+        # hyperparameters 
+        hidden_layer_size = 200 # should be sufficiently large
+        self.batch_size = 100
+        self.learning_rate = 0.1
+
+
+        # entrada tem o tamanho da quantidade caracteres unicos
+        self.W1 = nn.Parameter(self.num_chars, hidden_layer_size)
+        self.b1 = nn.Parameter(1, hidden_layer_size)
+
+        self.W2 = nn.Parameter(hidden_layer_size, hidden_layer_size)
+        self.b2 = nn.Parameter(1, hidden_layer_size)
+        
+        self.W3 = nn.Parameter(hidden_layer_size, len(self.languages))
+        self.b3 = nn.Parameter(1, len(self.languages))
+        # e saida tem o tamanho da quantidade de linguagens possiveis
 
     def run(self, xs):
         """
@@ -306,6 +323,33 @@ class LanguageIDModel(object):
         """
         "*** YOUR CODE HERE ***"
 
+        # primeiro caracter inicializa f como em modelos anteriores
+        x0W1 = nn.Linear(xs[0], self.W1)
+        hidden_layer_1 = nn.ReLU(nn.AddBias(x0W1, self.b1))
+
+        f_initial = hidden_layer_1
+
+        # z0
+        zi = nn.ReLU(nn.AddBias(f_initial, self.b1)) 
+
+        # combinar resultado com os proximos caracteres
+        for xi in xs[1:]:
+
+            # apply sub-network f to generate next hidden layer
+            # hi = f(h_anterior, letter)
+            ziW2 = nn.Linear(zi, self.W2)
+            ziW2_b2 = nn.ReLU(nn.AddBias(ziW2, self.b2))
+
+            xiW1 = nn.Linear(xi, self.W1)
+            xiW1_b1 = nn.ReLU(nn.AddBias(xiW1, self.b1))
+
+            zi = nn.Add(ziW2_b2, xiW1_b1)
+
+        # ultimo layer, scores das palavras
+        f_final = nn.AddBias(nn.Linear(zi, self.W3), self.b3) 
+        return f_final
+
+
     def get_loss(self, xs, y):
         """
         Computes the loss for a batch of examples.
@@ -321,9 +365,37 @@ class LanguageIDModel(object):
         Returns: a loss node
         """
         "*** YOUR CODE HERE ***"
+        return nn.SoftmaxLoss(self.run(xs), y)
+
 
     def train(self, dataset):
         """
         Trains the model.
         """
         "*** YOUR CODE HERE ***"
+        # repeatedly perform parameters updates
+        # until accuracy is great enough so at testing it would be at least 81%
+        accuracy = 0
+        while accuracy < 0.88: # funciona ate com 0.85, deixando 88 pra ficar safe
+            
+            for x, y in dataset.iterate_once(self.batch_size):
+                loss = self.get_loss(x, y)
+                
+                parameters = [self.W1, self.W2, self.W3, self.b1, self.b2, self.b3]
+                grad_wrt_W1, \
+                grad_wrt_W2, \
+                grad_wrt_W3, \
+                grad_wrt_b1, \
+                grad_wrt_b2, \
+                grad_wrt_b3 = nn.gradients(loss, parameters)
+                
+                self.W1.update(grad_wrt_W1, -self.learning_rate)
+                self.W2.update(grad_wrt_W2, -self.learning_rate)
+                self.W3.update(grad_wrt_W3, -self.learning_rate)
+                self.b1.update(grad_wrt_b1, -self.learning_rate)
+                self.b2.update(grad_wrt_b2, -self.learning_rate)
+                self.b3.update(grad_wrt_b3, -self.learning_rate)
+            
+            accuracy = dataset.get_validation_accuracy()
+            # print(accuracy)
+
