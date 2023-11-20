@@ -232,6 +232,10 @@ class DigitClassificationModel(object):
     def train(self, dataset):
         """
         Trains the model.
+
+        obs on learning rate:
+        A learning rate too low will result in the model learning too slowly
+        a learning rate too high may cause loss to diverge to infinity
         """
         "*** YOUR CODE HERE ***"
         # repeatedly perform parameters updates
