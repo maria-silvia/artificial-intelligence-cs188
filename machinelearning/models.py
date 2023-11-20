@@ -93,8 +93,9 @@ class RegressionModel(object):
 
         # create trainable parameters   
         self.W1 = nn.Parameter(1, hidden_layer_size) 
-        self.W2 = nn.Parameter(hidden_layer_size, 1)
         self.b1 = nn.Parameter(1, hidden_layer_size)
+
+        self.W2 = nn.Parameter(hidden_layer_size, 1)
         self.b2 = nn.Parameter(1, 1)
 
 
@@ -176,6 +177,18 @@ class DigitClassificationModel(object):
         # Initialize your model parameters here
         "*** YOUR CODE HERE ***"
 
+        # recommended hyperparameters by enunciado
+        hidden_layer_size = 200
+        self.batch_size = 100
+        self.learning_rate = 0.5
+
+        # create trainable parameters   
+        self.W1 = nn.Parameter(784, hidden_layer_size) 
+        self.b1 = nn.Parameter(1, hidden_layer_size)
+
+        self.W2 = nn.Parameter(hidden_layer_size, 10)
+        self.b2 = nn.Parameter(1, 10)
+
     def run(self, x):
         """
         Runs the model for a batch of examples.
@@ -191,6 +204,14 @@ class DigitClassificationModel(object):
                 (also called logits)
         """
         "*** YOUR CODE HERE ***"
+        # compute predictions for y with 2 layers
+        xW1 = nn.Linear(x, self.W1)
+        hidden_layer_1 = nn.ReLU(nn.AddBias(xW1, self.b1))
+        
+        h1W2 = nn.Linear(hidden_layer_1, self.W2)
+        hidden_layer_2 = nn.AddBias(h1W2, self.b2)
+        
+        return hidden_layer_2 # y
 
     def get_loss(self, x, y):
         """
@@ -206,12 +227,34 @@ class DigitClassificationModel(object):
         Returns: a loss node
         """
         "*** YOUR CODE HERE ***"
+        return nn.SoftmaxLoss(self.run(x), y)
+
 
     def train(self, dataset):
         """
         Trains the model.
         """
         "*** YOUR CODE HERE ***"
+        # repeatedly perform parameters updates
+        # until accuracy is great enough so at testing it would be at least 97%
+        accuracy = 0
+        while accuracy < 0.98:
+            
+            for x, y in dataset.iterate_once(self.batch_size):
+                loss = self.get_loss(x, y)
+                
+                parameters = [self.W1, self.W2, self.b1, self.b2]
+                gradients = nn.gradients(loss, parameters)
+                grad_wrt_W1, grad_wrt_W2, grad_wrt_b1, grad_wrt_b2 = gradients
+                
+                self.W1.update(grad_wrt_W1, -self.learning_rate)
+                self.W2.update(grad_wrt_W2, -self.learning_rate)
+                self.b1.update(grad_wrt_b1, -self.learning_rate)
+                self.b2.update(grad_wrt_b2, -self.learning_rate)
+            
+            accuracy = dataset.get_validation_accuracy()
+            # print(accuracy)
+
 
 class LanguageIDModel(object):
     """
