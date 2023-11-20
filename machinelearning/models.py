@@ -180,6 +180,7 @@ class DigitClassificationModel(object):
         # recommended hyperparameters by enunciado
         hidden_layer_size = 200
         self.batch_size = 100
+        self.learning_rate = 0.5
 
         # create trainable parameters   
         self.W1 = nn.Parameter(784, hidden_layer_size) 
@@ -240,13 +241,9 @@ class DigitClassificationModel(object):
         "*** YOUR CODE HERE ***"
         # repeatedly perform parameters updates
         # until accuracy is great enough so at testing it would be at least 97%
-        decreasing_learning_rate = 0.8
-        min_learning_rate = 0.5
 
         accuracy = 0
         while accuracy < 0.975:
-            self.learning_rate = max(min_learning_rate, decreasing_learning_rate)
-            print("learningn rate", self.learning_rate)
             
             for x, y in dataset.iterate_once(self.batch_size):
                 loss = self.get_loss(x, y)
@@ -259,8 +256,7 @@ class DigitClassificationModel(object):
                 self.W2.update(grad_wrt_W2, -self.learning_rate)
                 self.b1.update(grad_wrt_b1, -self.learning_rate)
                 self.b2.update(grad_wrt_b2, -self.learning_rate)
-            
-            decreasing_learning_rate -= 0.05
+
             accuracy = dataset.get_validation_accuracy()
             print("accuracy", accuracy)
 
@@ -385,7 +381,7 @@ class LanguageIDModel(object):
         # repeatedly perform parameters updates
         # until accuracy is great enough so at testing it would be at least 81%
         accuracy = 0
-        while accuracy < 0.88: # funciona ate com 0.85, deixando 88 pra ficar safe
+        while accuracy < 0.87: # pode funcionar ate com 0.85
             
             for x, y in dataset.iterate_once(self.batch_size):
                 loss = self.get_loss(x, y)
