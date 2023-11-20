@@ -43,3 +43,6 @@ reinforcement/qlearningAgents.py
 
 
 ## Machine Learning
+machinelearning/models.py
+
+- Binary Perceptron: PerceptronModel 

@@ -28,6 +28,9 @@ class PerceptronModel(object):
         """
         "*** YOUR CODE HERE ***"
 
+        # compute the dot product of the stored weight vector and the given input
+        return nn.DotProduct(self.w, x)
+
     def get_prediction(self, x):
         """
         Calculates the predicted class for a single data point `x`.
@@ -36,11 +39,42 @@ class PerceptronModel(object):
         """
         "*** YOUR CODE HERE ***"
 
+        dot_product_node = self.run(x)
+        dot_product_number = nn.as_scalar(dot_product_node)
+        
+        if dot_product_number >= 0:
+            return 1  
+        else:
+            return -1
+
+
     def train(self, dataset):
         """
         Train the perceptron until convergence.
         """
         "*** YOUR CODE HERE ***"
+        
+        # repeatedly loop over the dataset 
+        misclassifications = True
+        while misclassifications:
+
+            # until an entire pass over the data set 
+            # is completed without making any misclassifications
+            misclassifications = False
+
+            # for each training instance
+            for x, y in dataset.iterate_once(1):
+
+                # classify with current weights
+                predicted_class = self.get_prediction(x)
+
+                # if misclassified: adjust the weight vector
+                correct_class = nn.as_scalar(y)
+                if predicted_class != correct_class:
+                    misclassifications = True
+                    self.w.update(x, correct_class)
+
+        # 100% training accuracy has been achieved, and training can terminate.
 
 class RegressionModel(object):
     """
